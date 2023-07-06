@@ -1,12 +1,25 @@
 name: CI worflow
 on: 
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+  push: # when a push happens
+    branches: [main]  # on the main branch
+  pull_request: # when a pull request happens
+    branches: [main] #on the main branch 
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    container: python:3.9-slim
-
+  build: #name of the job
+    runs-on: ubuntu-latest #OS of the server
+    container: python:3.9-slim #container ran in the server
+    steps: 
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      -name: Lint with falke8
+        run: |
+          flake8 service --count --select=E9,F63,F7,F82 --show-source --statistics
+          flake8 service --count --max-complexity=10 --max-line-length=127 --statistics
+      -name: Run unit tests with nose
+        run: nosetests -v --with-spec --spec-color --with-coverage --cover-package=app
+ 
